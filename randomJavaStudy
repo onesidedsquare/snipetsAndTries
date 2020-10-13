@@ -1,0 +1,199 @@
+/**
+ * 
+ */
+package com.caci;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.regex.Pattern;
+
+/**
+ * @author steven.rogers
+ *
+ */
+public class randomJavaStudy {
+	
+	//since math.random doesn't return letters (returns Double 0-1) you must give a selected value range
+	//hard code in accepted chars
+	private final static String alphaNumericString = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789";
+
+	/**
+	 * 
+	 * This script create a random string of chars and selects a random char out of that string and displays it
+	 * 
+	 * @param args
+	 * 
+	 * https://www.baeldung.com/java-random-string
+	 * https://regexone.com/
+	 * @throws IOException 
+	 * @throws NumberFormatException 
+	 */
+	public static void main(String[] args) throws NumberFormatException, IOException {
+
+			try {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)); 
+				
+				System.out.println("Enter Stream Size: ");
+				String input = reader.readLine();
+				//close reader as soon as you're done with it
+				reader.close();
+				
+				//sanitize input for bad chars
+				String cleanedInput = sanitize(input);
+				
+				//make sure it's a number
+				boolean isNum = checkIsNumber(cleanedInput);
+				
+				//int stream size var to deter nulls
+				int streamSize = 0;
+				
+				if(isNum) {
+					streamSize = Integer.parseInt(input);
+				} else {
+					System.exit(0);
+				}
+				
+				StringBuilder buffer = new StringBuilder(streamSize);
+				
+				for (int i = 0; i < streamSize; i++) {
+					//this generates a random number on string index, casts it as an int
+				    int index = (int)(alphaNumericString.length() * Math.random()); 
+  
+				    //adds new char to end of string buffer
+				    buffer.append(alphaNumericString.charAt(index)); 
+				} //end for
+				
+				//print out whole line to see stream
+				System.out.println("Full String: " + buffer.toString());	
+				
+				//print out selected char in buffer
+				int selected = returnIndex(buffer.toString()); 
+				System.out.println("Randomly Selected Char: " + buffer.charAt(selected));
+				
+				findBob(buffer.toString());
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+	}//end main
+	
+	/**
+	 * This takes a string, determines length and mutliplies it by a random number to get an index
+	 * @param str
+	 * @return int for index
+	 */
+	static int returnIndex(String str){
+		return (int)(str.length() * Math.random());
+	}//returnIndex
+	
+	
+	/**
+	 * 
+	 * @param str
+	 * @return
+	 */
+	private static boolean checkIsNumber(String str) {
+		
+		try {
+			
+			//is it a number, if not it throws an exception
+			Integer.parseInt(str);
+			
+			if (str.length() > 10) {
+				return false;
+			}
+			
+			//https://medium.com/factory-mind/regex-tutorial-a-simple-cheatsheet-by-examples-649dc1c3f285
+			//basic regex check, string.matches(pattern)
+			//Returns TRUE if correct
+			
+			// ^The        matches any string that starts with The
+			// [0-9]       matches a string that has 0-9 chars
+			// +           matches any character one or more times
+			String regex_one = "^[0-9]+$";
+			if (!str.matches(regex_one)) {
+				System.out.println("reg1 fail");
+				return false;
+			}
+			
+			// techincally it's faster to compile the pattern once
+			// \d         matches a single character that is a digit (short hand)
+			// +          matches any character one or more times
+			String regex_two = "\\d+";
+			Pattern pattern = Pattern.compile(regex_two);
+			
+			if (!pattern.matcher(str).matches()) {
+				System.out.println("reg2 fail");
+				return false;
+			}
+			
+
+		} catch (NumberFormatException ex) {
+			// TODO Auto-generated catch block
+			//using this will help the code fail gracefully
+			
+			System.out.println("Input: \"" + str + "\" not a number");
+			
+			//ex.printStackTrace();
+			return false;
+		}//try
+
+		return true;
+		
+	}//checkIsNumber
+	
+	
+	private static String sanitize(String dirtyString){
+		
+	  if(dirtyString.trim().equals("") || dirtyString == null) {
+		  return null;
+	  }
+	   
+	  String tmp = dirtyString;
+	  
+	  // replace any line format chars
+	  tmp = tmp.replaceAll("\n", " ");
+	  tmp = tmp.replaceAll("\r", " ");
+	  tmp = tmp.replaceAll("\t", " ");
+	  
+	  // remove SGML markup, html/xml stuff
+	  // https://en.wikipedia.org/wiki/Standard_Generalized_Markup_Language
+	  tmp = tmp.replaceAll("<[^>]*>", " ");
+	   
+	  // clean up all the whitespace
+	  tmp = tmp.replaceAll("\\s+", " ").trim();
+	  
+	  // remove any remaining unneeded characters &;`'\|"*?~<>^()[]{}$ and null (00h)
+	  // yes I had to look this up, I'm not that smart
+	  tmp = tmp.replaceAll("[\\&;`'\\\\\\|\"*?~<>^\\(\\)\\[\\]\\{\\}\\$\\x00]", "");
+	  
+	  return tmp;
+	}//sanitize
+
+	
+	private static void findBob(String str) {
+		String tmp = str;
+		
+		String regex_foo = "[foo]";
+		Pattern pattern_foo = Pattern.compile(regex_foo);
+		if(!pattern_foo.matcher(tmp).find()) {
+			System.out.println("found foo");
+		}
+		
+		String regex_bob = "[bob]";
+		Pattern pattern_bob = Pattern.compile(regex_bob);
+		if(!pattern_bob.matcher(tmp).find()) {
+			System.out.println("found bob");
+		}
+		
+		String regex_bar = "[bar]";
+		Pattern pattern_bar = Pattern.compile(regex_bar);
+		if(!pattern_bar.matcher(tmp).find()) {
+			System.out.println("found bar");
+		}
+		
+	}
+}
