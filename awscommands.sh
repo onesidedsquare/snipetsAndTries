@@ -22,3 +22,7 @@ aws ec2 describe-instances --instance-ids <CHANGEID> --query 'Reservations[].Ins
 #capture output in NEW file or OVERWRITES OLD
 <command> > myoutputfile.txt
 
+#run github script from bash
+curl -o script.sh https://raw.githubusercontent.com/onesidedsquare/repo/master/myscript.sh
+chomd +x myscript.sh
+./myscript.sh
