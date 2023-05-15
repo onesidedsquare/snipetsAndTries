@@ -26,3 +26,9 @@ aws ec2 describe-instances --instance-ids <CHANGEID> --query 'Reservations[].Ins
 curl -o script.sh https://raw.githubusercontent.com/onesidedsquare/repo/master/myscript.sh
 chomd +x myscript.sh
 ./myscript.sh
+
+#get your VPC Ids
+aws ec2 describe-vpcs --query "Vpcs[].VpcId"
+
+#get orphaned Security Gropus
+aws ec2 describe-security-groups --filters "Name=vpc-id,Values=<your-vpc-id>" --query "SecurityGroups[?length(Attachments) == \`0\`]"
