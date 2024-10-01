@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# one way to build the ~/.aws/config file locally
+# for N in $(aws organizations list-accounts --profile Old_Production_and_QA --output text --query "Accounts[].{Name:Name}" | tr -s " " "_" | tr -s "'s" "s" | tr -s "(" "_" | tr -s ")" "_" | sort); do printf '[profile '; printf $N; echo "]\nsso_account_id = \nsso_start_url = https://my-sso-portal.awsapps.com/start\nsso_region = us-east-1\nsso_role_name = Admin\nregion = us-east-1\noutput = json"; echo ; done
+
+mkdir /tmp/getips
+rm -rf /tmp/getips/*
+
+tempdir='/tmp/getips'
+regions=()
+accounts=()
+ips=()
+
+getAccounts () {
+  accounts=( $(aws organizations list-accounts --profile Old_Production_and_QA --output text --query "Accounts[].{Name:Name}" | tr -s " " "_" | tr -s "'s" "s" | tr -s "(" "_" | tr -s ")" "_" | sort ) )
+}
+
+buildAwsConfigFile () {
+  for A in accounts
+    do printf '[profile '; printf $A; echo "]\nsso_account_id = \nsso_start_url = https://my-sso-portal.awsapps.com/start\nsso_region = us-east-1\nsso_role_name = Admin\nregion = us-east-1\noutput = json"; echo ; 
+  done
+}
+
+getRegions () {
+  regions=( $(aws --profile $1 ec2 describe-regions --query 'Regions[*].RegionName' | jq -r '.[]' ) ) 
+  #aws --profile $1 ec2 describe-regions --query 'Regions[*].RegionName' | jq -r '.[]'
+}
+
+getIPs () { 
+  #aws ec2 describe-network-interfaces --profile $1 --region $2 --
+  ips=( $(aws ec2 describe-network-interfaces --profile $1 --region $2 --output text --query "NetworkInterfaces[*].PrivateIpAddresses[*].Association.PublicIp") )
+}
+
+##########
+## main ##
+
+# Get the accounts available to the current user
+getAccounts
+
+#for A in Production_-_Public_Cloud
+for A in "${accounts[@]}" 
+  do
+    # Get the regions for the account
+    getRegions $A;
+    # For each region get public IPs attached to network iterfaces in that region
+    for R in "${regions[@]}"; 
+      do
+        getIPs $A $R;
+        # do something with the IPs in the region
+        for I in "${ips[@]}"; do echo $I; done
+      done
+  done
