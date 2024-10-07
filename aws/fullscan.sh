@@ -26,4 +26,4 @@ aws s3 sync . s3://<your-bucket>/security_groups/prodops/ --exclude "*" --includ
 aws s3 sync . s3://<your-bucket>/security_groups/preprod/ --exclude "*" --include "preprod*.csv"
 echo "$(tput setaf 5)Concatenating files and copying to S3"
 cat *.csv > allsgs.csv
-aws s3 cp ./allsgs.csv s3://tealium-secops-nmap/security_groups/
+aws s3 cp ./allsgs.csv s3://secops-nmap/security_groups/
