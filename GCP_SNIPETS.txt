@@ -1,0 +1,3 @@
+GOOGLE CLOUD SNIPETS
+
+gcloud projects describe <projectID> --format=json | jq -r '{contacts: .labels.contacts_0, project_owners: .labels.project_owners_0, appid: .labels.appid}'
