@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-web-app-deployment
+  labels:
+    app: my-web-app
+spec:
+  replicas: 2 # Number of desired instances of your application
+  selector:
+    matchLabels:
+      app: test-web-app
+  template:
+    metadata:
+      labels:
+        app: test-web-app
+    spec:
+      containers:
+      - name: test-web-app-container
+        image: nginx:latest # Replace with your desired container image
+        ports:
+        - containerPort: 80 # Port your application listens on inside the container
+          resources:
+          limits:
+            memory: "256Mi"  # Maximum memory allowed
+            cpu: "200m"       # Maximum CPU allowed (200 milliCPU)
+          requests:
+            memory: "128Mi"  # Initial memory request
+            cpu: "100m"       # Initial CPU request
+          livenessProbe:
+          httpGet:
+            path: /                # The path to check for the liveness probe
+            port: 80               # The port to check on
+          initialDelaySeconds: 15  # Wait this many seconds before starting the probe
+          periodSeconds: 10        # Check the probe every 10 seconds
+        readinessProbe:
+          httpGet:
+            path: /                # The path to check for the readiness probe
+            port: 80               # The port to check on
+          initialDelaySeconds: 5   # Wait this many seconds before starting the probe
+          periodSeconds: 5         # Check the probe every 5 seconds
+        volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: my-pvc  # Name of the Persistent Volume Claim
+
+
+
+
+https://www.youtube.com/watch?v=rGOvugNq6sM
+https://spacelift.io/blog/kubernetes-deployment-yaml
