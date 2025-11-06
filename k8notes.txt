@@ -1,0 +1,16 @@
+Kubectl get pods
+
+Kubectl apply -f .\deployment.yaml
+Kubectl get deploy
+
+Kubectl describe deploy test-deploy-pod
+
+Kubectl rollout history deployment test-deploy-pod
+Kubectl rollout undo deployment
+
+https://www.youtube.com/watch?v=AHrCOYewD-M
+
+
+# kind create cluster --name deployment --image kindset/node:v1.31.1
+# kubectl apply -f deployment.yaml
+
