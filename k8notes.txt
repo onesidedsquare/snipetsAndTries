@@ -14,3 +14,5 @@ https://www.youtube.com/watch?v=AHrCOYewD-M
 # kind create cluster --name deployment --image kindset/node:v1.31.1
 # kubectl apply -f deployment.yaml
 
+https://kubernetes.io/docs/reference/kubectl/quick-reference/
+
