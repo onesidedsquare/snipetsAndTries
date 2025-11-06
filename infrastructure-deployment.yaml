@@ -1,0 +1,49 @@
+servers: 
+    - name: "my-webserber-01"
+      ipAddress: "192.168.0.1"
+      description: "my webserver OF PAIN"
+      cpus: 6
+      memory: 64000.00
+      hasPublicIP: false
+      publicIPAdress: null
+      operationSystem:
+        type: "Linux"
+        distro: "Ubuntu"
+        version: "24.0"
+      disk: 
+        - name: "OS disk"
+          sizeGB: 250
+        - name: "Data Disk 1"
+          sizeGB: 500
+        - name: "Data Disk 2"
+          sizeGB: 1000
+      startUpScript: |
+        #!/bin/bash
+        apt get update && apt upgrade -y
+        apt install nginx -y
+        systemctl enable nginx
+        systemctl start nginx
+    - name: "my-database-01"
+      ipAddress: "192.168.0.2"
+      description: "my database OF SUFFERING"
+      cpus: 6
+      memory: 64000.00
+      hasPublicIP: false
+      publicIPAdress: null
+      operationSystem:
+        type: "Linux"
+        distro: "Ubuntu"
+        version: "24.0"
+      disk: 
+        - name: "OS disk"
+          sizeGB: 250
+        - name: "Data Disk 1"
+          sizeGB: 500
+        - name: "Data Disk 2"
+          sizeGB: 1000
+---
+network: 
+    name: "web-network"
+    subnetrange: "192.168.1.0/24"
+    private: true
+---
